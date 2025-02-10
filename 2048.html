@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2048 Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #game-board {
+            width: 400px;
+            height: 400px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            background-color: #bbada0;
+            padding: 10px;
+            margin: 20px auto;
+            border-radius: 10px;
+        }
+        .tile {
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            background-color: #eee4da;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>2048 Game</h1>
+    <div id="game-board"></div>
+    <script>
+        const boardSize = 4;
+        let board = Array.from({ length: boardSize }, () => Array(boardSize).fill(0));
+        
+        function getRandomEmptyCell() {
+            let emptyCells = [];
+            for (let row = 0; row < boardSize; row++) {
+                for (let col = 0; col < boardSize; col++) {
+                    if (board[row][col] === 0) emptyCells.push({ row, col });
+                }
+            }
+            return emptyCells.length > 0 ? emptyCells[Math.floor(Math.random() * emptyCells.length)] : null;
+        }
+        
+        function addNewTile() {
+            let cell = getRandomEmptyCell();
+            if (cell) {
+                board[cell.row][cell.col] = Math.random() > 0.9 ? 4 : 2;
+                renderBoard();
+            }
+        }
+        
+        function renderBoard() {
+            const gameBoard = document.getElementById("game-board");
+            gameBoard.innerHTML = "";
+            board.forEach(row => {
+                row.forEach(value => {
+                    const tile = document.createElement("div");
+                    tile.className = "tile";
+                    tile.textContent = value === 0 ? "" : value;
+                    tile.style.backgroundColor = value === 0 ? "#cdc1b4" : `#f2b179`;
+                    gameBoard.appendChild(tile);
+                });
+            });
+        }
+        
+        function moveLeft() {
+            for (let row = 0; row < boardSize; row++) {
+                let newRow = board[row].filter(v => v !== 0);
+                for (let i = 0; i < newRow.length - 1; i++) {
+                    if (newRow[i] === newRow[i + 1]) {
+                        newRow[i] *= 2;
+                        newRow.splice(i + 1, 1);
+                    }
+                }
+                while (newRow.length < boardSize) newRow.push(0);
+                board[row] = newRow;
+            }
+        }
+        
+        function rotateBoard() {
+            let newBoard = board.map((_, i) => board.map(row => row[i])).reverse();
+            board = newBoard;
+        }
+        
+        function handleMove(direction) {
+            let oldBoard = JSON.stringify(board);
+            if (direction === "ArrowLeft") moveLeft();
+            else if (direction === "ArrowRight") { rotateBoard(); rotateBoard(); moveLeft(); rotateBoard(); rotateBoard(); }
+            else if (direction === "ArrowUp") { rotateBoard(); rotateBoard(); rotateBoard(); moveLeft(); rotateBoard(); }
+            else if (direction === "ArrowDown") { rotateBoard(); moveLeft(); rotateBoard(); rotateBoard(); rotateBoard(); }
+            
+            if (JSON.stringify(board) !== oldBoard) addNewTile();
+        }
+        
+        document.addEventListener("keydown", (e) => {
+            if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(e.key)) {
+                handleMove(e.key);
+            }
+        });
+        
+        addNewTile();
+        addNewTile();
+        renderBoard();
+    </script>
+</body>
+</html>

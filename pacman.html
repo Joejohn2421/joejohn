@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pac-Man Game</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            background-color: black;
+            display: block;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pac-Man</h1>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        
+        const gridSize = 20;
+        let pacman = { x: 200, y: 200, dx: gridSize, dy: 0, size: 18 };
+        let food = { x: 100, y: 100, size: 10 };
+        
+        function drawPacman() {
+            ctx.beginPath();
+            ctx.arc(pacman.x, pacman.y, pacman.size, 0.2 * Math.PI, 1.8 * Math.PI);
+            ctx.lineTo(pacman.x, pacman.y);
+            ctx.fillStyle = "yellow";
+            ctx.fill();
+            ctx.closePath();
+        }
+        
+        function drawFood() {
+            ctx.beginPath();
+            ctx.arc(food.x, food.y, food.size, 0, 2 * Math.PI);
+            ctx.fillStyle = "red";
+            ctx.fill();
+            ctx.closePath();
+        }
+        
+        function updatePacman() {
+            pacman.x += pacman.dx;
+            pacman.y += pacman.dy;
+            
+            if (pacman.x < 0) pacman.x = canvas.width;
+            if (pacman.x > canvas.width) pacman.x = 0;
+            if (pacman.y < 0) pacman.y = canvas.height;
+            if (pacman.y > canvas.height) pacman.y = 0;
+            
+            if (Math.abs(pacman.x - food.x) < pacman.size && Math.abs(pacman.y - food.y) < pacman.size) {
+                food.x = Math.floor(Math.random() * (canvas.width - gridSize));
+                food.y = Math.floor(Math.random() * (canvas.height - gridSize));
+            }
+        }
+        
+        function gameLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawPacman();
+            drawFood();
+            updatePacman();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        document.addEventListener("keydown", (event) => {
+            const keyMap = {
+                "ArrowUp": { dx: 0, dy: -gridSize },
+                "ArrowDown": { dx: 0, dy: gridSize },
+                "ArrowLeft": { dx: -gridSize, dy: 0 },
+                "ArrowRight": { dx: gridSize, dy: 0 }
+            };
+            if (keyMap[event.key]) {
+                pacman.dx = keyMap[event.key].dx;
+                pacman.dy = keyMap[event.key].dy;
+            }
+        });
+        
+        gameLoop();
+    </script>
+</body>
+</html>
