@@ -8,105 +8,132 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f4f4f4;
+            color: white;
+            transition: background 0.3s ease;
+            overflow: hidden;
+        }
+        #video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
         }
         h1 {
             margin-top: 20px;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
         .game-container {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
         }
         .game {
-            background: white;
+            background: rgba(255, 255, 255, 0.2);
             padding: 20px;
-            margin: 10px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, background 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .game:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .game img {
+            width: 100px;
+            height: 100px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
         }
         a {
             text-decoration: none;
-            color: #333;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
         }
-        canvas {
-            border: 1px solid black;
-            background: white;
+        .search-bar {
+            margin: 20px;
+            padding: 10px;
+            font-size: 1em;
+            width: 50%;
+            border-radius: 10px;
+            border: none;
+            text-align: center;
         }
+        .dark-mode-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: black;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        .dark-mode {
+            background: black;
+            color: white;
+        }
+        .ads {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 150px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .left-ad { left: 10px; }
+        .right-ad { right: 10px; }
     </style>
 </head>
 <body>
+    <video id="video-background" autoplay loop muted>
+        <source src="gameplay-background.mp4" type="video/mp4">
+    </video>
+    <div class="ads left-ad">Ad Space</div>
+    <div class="ads right-ad">Ad Space</div>
+    <button class="dark-mode-btn" onclick="toggleDarkMode()">Dark Mode</button>
     <h1>Welcome to Free Games!</h1>
-    <p>Click on a game to play.</p>
+    <input type="text" class="search-bar" placeholder="Search for a game..." onkeyup="filterGames()">
     <div class="game-container">
-        <div class="game">
-            <a href="tic-tac-toe.html">Play Tic-Tac-Toe</a>
-        </div>
-        <div class="game">
-            <a href="snake.html">Play Snake</a>
-        </div>
-        <div class="game">
-            <a href="memory-game.html">Play Memory Game</a>
-        </div>
+        <div class="game"><img src="tic-tac-toe.png"><a href="tic-tac-toe.html">🎲 Play Tic-Tac-Toe</a></div>
+        <div class="game"><img src="snake.png"><a href="snake.html">🐍 Play Snake</a></div>
+        <div class="game"><img src="memory-game.png"><a href="memory-game.html">🧠 Play Memory Game</a></div>
+        <div class="game"><img src="flappy-bird.png"><a href="flappy-bird.html">🐦 Play Flappy Bird</a></div>
+        <div class="game"><img src="pong.png"><a href="pong.html">🏓 Play Pong</a></div>
+        <div class="game"><img src="2048.png"><a href="2048.html">🔢 Play 2048</a></div>
+        <div class="game"><img src="space-invaders.png"><a href="space-invaders.html">👾 Play Space Invaders</a></div>
+        <div class="game"><img src="pacman.png"><a href="pacman.html">🟡 Play Pac-Man</a></div>
+        <div class="game"><img src="minesweeper.png"><a href="minesweeper.html">💣 Play Minesweeper</a></div>
+        <div class="game"><img src="dino-run.png"><a href="dino-run.html">🦖 Play Dino Run</a></div>
     </div>
-
     <script>
-        // Simple Tic-Tac-Toe Game
-        document.addEventListener("DOMContentLoaded", () => {
-            if (window.location.pathname.includes("tic-tac-toe.html")) {
-                document.body.innerHTML = `<h1>Tic-Tac-Toe</h1><canvas id='board' width='300' height='300'></canvas>`;
-                let canvas = document.getElementById("board");
-                let ctx = canvas.getContext("2d");
-                let board = [[null, null, null], [null, null, null], [null, null, null]];
-                let currentPlayer = "X";
-                canvas.addEventListener("click", (e) => {
-                    let x = Math.floor(e.offsetX / 100);
-                    let y = Math.floor(e.offsetY / 100);
-                    if (!board[y][x]) {
-                        board[y][x] = currentPlayer;
-                        ctx.fillText(currentPlayer, x * 100 + 50, y * 100 + 50);
-                        currentPlayer = currentPlayer === "X" ? "O" : "X";
-                    }
-                });
-            }
-            
-            // Simple Snake Game
-            if (window.location.pathname.includes("snake.html")) {
-                document.body.innerHTML = `<h1>Snake Game</h1><canvas id='snakeCanvas' width='400' height='400'></canvas>`;
-                let canvas = document.getElementById("snakeCanvas");
-                let ctx = canvas.getContext("2d");
-                let snake = [{ x: 200, y: 200 }];
-                let food = { x: 100, y: 100 };
-                let direction = "right";
-                document.addEventListener("keydown", (e) => {
-                    if (e.key === "ArrowUp") direction = "up";
-                    if (e.key === "ArrowDown") direction = "down";
-                    if (e.key === "ArrowLeft") direction = "left";
-                    if (e.key === "ArrowRight") direction = "right";
-                });
-                function gameLoop() {
-                    let head = { ...snake[0] };
-                    if (direction === "up") head.y -= 20;
-                    if (direction === "down") head.y += 20;
-                    if (direction === "left") head.x -= 20;
-                    if (direction === "right") head.x += 20;
-                    snake.unshift(head);
-                    if (head.x === food.x && head.y === food.y) {
-                        food.x = Math.floor(Math.random() * 20) * 20;
-                        food.y = Math.floor(Math.random() * 20) * 20;
-                    } else {
-                        snake.pop();
-                    }
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.fillStyle = "green";
-                    snake.forEach(part => ctx.fillRect(part.x, part.y, 20, 20));
-                    ctx.fillStyle = "red";
-                    ctx.fillRect(food.x, food.y, 20, 20);
-                    setTimeout(gameLoop, 100);
-                }
-                gameLoop();
-            }
-        });
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
+        }
+        function filterGames() {
+            let input = document.querySelector(".search-bar").value.toLowerCase();
+            let games = document.querySelectorAll(".game");
+            games.forEach(game => {
+                let text = game.innerText.toLowerCase();
+                game.style.display = text.includes(input) ? "block" : "none";
+            });
+        }
     </script>
 </body>
 </html>
