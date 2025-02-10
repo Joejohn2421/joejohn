@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Games</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        .game-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .game {
+            background: white;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        a {
+            text-decoration: none;
+            color: #333;
+        }
+        canvas {
+            border: 1px solid black;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Free Games!</h1>
+    <p>Click on a game to play.</p>
+    <div class="game-container">
+        <div class="game">
+            <a href="tic-tac-toe.html">Play Tic-Tac-Toe</a>
+        </div>
+        <div class="game">
+            <a href="snake.html">Play Snake</a>
+        </div>
+        <div class="game">
+            <a href="memory-game.html">Play Memory Game</a>
+        </div>
+    </div>
+
+    <script>
+        // Simple Tic-Tac-Toe Game
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.location.pathname.includes("tic-tac-toe.html")) {
+                document.body.innerHTML = `<h1>Tic-Tac-Toe</h1><canvas id='board' width='300' height='300'></canvas>`;
+                let canvas = document.getElementById("board");
+                let ctx = canvas.getContext("2d");
+                let board = [[null, null, null], [null, null, null], [null, null, null]];
+                let currentPlayer = "X";
+                canvas.addEventListener("click", (e) => {
+                    let x = Math.floor(e.offsetX / 100);
+                    let y = Math.floor(e.offsetY / 100);
+                    if (!board[y][x]) {
+                        board[y][x] = currentPlayer;
+                        ctx.fillText(currentPlayer, x * 100 + 50, y * 100 + 50);
+                        currentPlayer = currentPlayer === "X" ? "O" : "X";
+                    }
+                });
+            }
+            
+            // Simple Snake Game
+            if (window.location.pathname.includes("snake.html")) {
+                document.body.innerHTML = `<h1>Snake Game</h1><canvas id='snakeCanvas' width='400' height='400'></canvas>`;
+                let canvas = document.getElementById("snakeCanvas");
+                let ctx = canvas.getContext("2d");
+                let snake = [{ x: 200, y: 200 }];
+                let food = { x: 100, y: 100 };
+                let direction = "right";
+                document.addEventListener("keydown", (e) => {
+                    if (e.key === "ArrowUp") direction = "up";
+                    if (e.key === "ArrowDown") direction = "down";
+                    if (e.key === "ArrowLeft") direction = "left";
+                    if (e.key === "ArrowRight") direction = "right";
+                });
+                function gameLoop() {
+                    let head = { ...snake[0] };
+                    if (direction === "up") head.y -= 20;
+                    if (direction === "down") head.y += 20;
+                    if (direction === "left") head.x -= 20;
+                    if (direction === "right") head.x += 20;
+                    snake.unshift(head);
+                    if (head.x === food.x && head.y === food.y) {
+                        food.x = Math.floor(Math.random() * 20) * 20;
+                        food.y = Math.floor(Math.random() * 20) * 20;
+                    } else {
+                        snake.pop();
+                    }
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = "green";
+                    snake.forEach(part => ctx.fillRect(part.x, part.y, 20, 20));
+                    ctx.fillStyle = "red";
+                    ctx.fillRect(food.x, food.y, 20, 20);
+                    setTimeout(gameLoop, 100);
+                }
+                gameLoop();
+            }
+        });
+    </script>
+</body>
+</html>
